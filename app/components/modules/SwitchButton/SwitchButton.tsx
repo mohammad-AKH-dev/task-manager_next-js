@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import Switch, { SwitchProps } from "@mui/material/Switch";
 import { FormGroup, styled } from "@mui/material";
 import { themeContext } from "@/app/contexts/ThemeContext";
+import { StyledComponent } from "@emotion/styled";
+import { Theme } from "@emotion/react";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 62,
@@ -62,25 +64,30 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }));
 
 function SwitchButton() {
-   const ThemeContext = useContext(themeContext)
+  const ThemeContext = useContext(themeContext);
 
+  useEffect(() => {
+    const storage = JSON.parse(localStorage.getItem("theme")!);
+
+    if (storage === "dark") {
+      localStorage.setItem("theme", JSON.stringify("light"));
+      
+    }
+  });
 
   const setTheme = (checked: boolean) => {
-    console.log(checked)
     if (checked) {
-      ThemeContext?.setValue('dark')
-    }else {
-      ThemeContext?.setValue('light')
+      ThemeContext?.setValue("dark");
+      localStorage.setItem("theme", JSON.stringify("dark"));
+    } else {
+      ThemeContext?.setValue("light");
+      localStorage.setItem("theme", JSON.stringify("light"));
     }
   };
-  
-
 
   return (
     <FormGroup>
-      <MaterialUISwitch
-        onChange={(event) => setTheme(event.target.checked)}
-      />
+      <MaterialUISwitch onChange={(event) => setTheme(event.target.checked)} />
     </FormGroup>
   );
 }

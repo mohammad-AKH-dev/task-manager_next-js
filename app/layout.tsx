@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ThemeContextProvider from "./contexts/ThemeContext";
+import Navbar from "./components/modules/Navbar/Navbar";
+import Link from "next/link";
+import { SidebarDemo } from "./components/modules/Sidebar/Sidebar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -11,11 +14,20 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) 
+{
   return (
     <html lang="en">
-      <body className="font-poppins">
-        <ThemeContextProvider>{children}</ThemeContextProvider>
+      <body className="font-poppins text-[16px] dark:text-neutral-200">
+        <ThemeContextProvider>
+          <section className="taskmanager-content__section">
+            <Navbar />
+            <div className="taskmanager-content__wrapper flex gap-x-6 sm:gap-x-5 md:gap-x-8 relative">
+              <SidebarDemo />
+              <div className="taskmanager-content pr-8 lg:pr-0 w-[85%] sm:w-[88%] md:w-[70%] lg:w-[75%]">{children}</div>
+            </div>
+          </section>
+        </ThemeContextProvider>
       </body>
     </html>
   );
