@@ -8,6 +8,13 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+
+@media all and (max-width: 899px) {
+  .tabs-component {
+    display: none !important;
+  }
+}
+
 @media all and (max-width: 540px) {
   .css-1dtyinu-MuiChartsWrapper-root {
     display: flex !important;
@@ -44,4 +51,10 @@
     column-gap: 15px !important;
   }
   
+}
+
+@media all and (min-width: 899px) {
+  .select-component {
+     display: none !important;
+  }
 }

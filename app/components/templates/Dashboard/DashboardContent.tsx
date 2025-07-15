@@ -53,7 +53,7 @@ function DashboardContent() {
         </div>
       </div>
       {/* dashboard charts */}
-      <div className="dashboard-charts grid grid-cols-1 gap-y-6 lg:grid-cols-2 gap-x-8 mt-12 relative -z-[1] items-center">
+      <div className="dashboard-charts grid grid-cols-1 gap-y-6 lg:grid-cols-2 gap-x-8 mt-12 relative  items-center">
         <div className="rounded-xl relative bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-200">
           <h4 className="donut-chart__title capitalize absolute top-4 font-bold dark:text-neutral-200 text-black left-4">
             task distribution

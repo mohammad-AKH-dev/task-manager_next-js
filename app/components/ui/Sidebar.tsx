@@ -88,25 +88,23 @@ export const DesktopSidebar = ({
   const { open, setOpen, animate } = useSidebar();
 
   useEffect(() => {
-    const taskManagerContentElm = document.querySelector('.taskmanager-content')
-    if(open) {
-      taskManagerContentElm?.classList.add('relative')
-      taskManagerContentElm?.classList.add('-z-[1]')
-    }else {
-       taskManagerContentElm?.classList.remove('relative')
-      taskManagerContentElm?.classList.remove('-z-[1]')
+    const taskManagerContentElm = document.querySelector(
+      ".taskmanager-content"
+    );
+    if (open) {
+      taskManagerContentElm?.classList.add("relative");
+      taskManagerContentElm?.classList.add("-z-[1]");
+    } else {
+      taskManagerContentElm?.classList.remove("relative");
+      taskManagerContentElm?.classList.remove("-z-[1]");
     }
-    console.log(taskManagerContentElm)
-    console.log(open)
-  },[open])
+  }, [open]);
 
   return (
     <>
       <motion.div
         className={cn(
-          `h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 ${
-             "w-full"
-          } shrink-0`,
+          `h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 ${"w-full"} shrink-0`,
           className
         )}
         animate={{
@@ -183,30 +181,63 @@ export const SidebarLink = ({
   const { open, animate } = useSidebar();
   const pathName = usePathname();
   return (
-    <Link
-      href={link.href}
-      className={cn(
-        `flex items-center text-[15px] xl:text-[17px] ${
-          link.href === pathName
-            ? "text-blue-600"
-            : "text-neutral-700 dark:text-neutral-200"
-        } justify-start gap-2  group/sidebar py-2`,
-        className
-      )}
-      {...props}
-    >
-      {link.icon}
+    <>
+      {link.href !== "#" ? (
+        <Link
+          href={link.href}
+          className={cn(
+            `flex items-center text-[15px] xl:text-[17px] ${
+              link.href === pathName
+                ? "text-blue-600"
+                : "text-neutral-700 dark:text-neutral-200"
+            } justify-start gap-2  group/sidebar py-2`,
+            className
+          )}
+          {...props}
+        >
+          {link.icon}
 
-      <motion.span
-        animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
-        className={`
+          <motion.span
+            animate={{
+              display: animate
+                ? open
+                  ? "inline-block"
+                  : "none"
+                : "inline-block",
+              opacity: animate ? (open ? 1 : 0) : 1,
+            }}
+            className={`
           group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0`}
-      >
-        {link.label}
-      </motion.span>
-    </Link>
+          >
+            {link.label}
+          </motion.span>
+        </Link>
+      ) : (
+        <span
+          className={cn(
+            `flex items-center cursor-pointer text-[15px] xl:text-[17px]  justify-start gap-2  group/sidebar py-2`,
+            className
+          )}
+          {...props}
+        >
+          {link.icon}
+
+          <motion.span
+            animate={{
+              display: animate
+                ? open
+                  ? "inline-block"
+                  : "none"
+                : "inline-block",
+              opacity: animate ? (open ? 1 : 0) : 1,
+            }}
+            className={`
+          group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0`}
+          >
+            {link.label}
+          </motion.span>
+        </span>
+      )}
+    </>
   );
 };

@@ -22,7 +22,7 @@ export function SidebarDemo() {
     },
     {
       label: "Manage Tasks",
-      href: "tasks",
+      href: "/tasks",
       icon: (
         <IconProgressCheck className="h-5 w-5 shrink-0 text-[17px]" />
       ),

@@ -18,13 +18,17 @@ function Navbar() {
     if (ThemeContext?.value === "dark") {
       document.documentElement.classList.add("dark");
       document.documentElement.style.backgroundColor = "#161414";
-      ul.style.color = "#e5e5e5";
-      barChart.style.stroke = "#e5e5e5";
+      if (ul && barChart) {
+        ul.style.color = "#e5e5e5";
+        barChart.style.stroke = "#e5e5e5";
+      }
     } else {
       document.documentElement.classList.remove("dark");
       document.documentElement.style.backgroundColor = "#e5e5e5";
-      ul.style.color = "#030712";
-      barChart.style.stroke = "#030712";
+      if (ul && barChart) {
+        ul.style.color = "#030712";
+        barChart.style.stroke = "#030712";
+      }
     }
   }, [ThemeContext?.value]);
   return (
