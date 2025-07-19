@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import {
   createContext,
   Dispatch,
@@ -18,6 +19,7 @@ type ThemeContextProviderTypes = {
 export const themeContext = createContext<ThemeContextProviderTypes>(null);
 
 const ThemeContextProvider = ({ children }: React.PropsWithChildren) => {
+  const pathName = usePathname()
   const [theme, setTheme] = useState<themeContextValueType>(() => {
     if (typeof window !== "undefined") {
       return (
@@ -38,6 +40,13 @@ const ThemeContextProvider = ({ children }: React.PropsWithChildren) => {
       setTheme(theme);
     }
   }, []);
+
+  useEffect(() => {
+    const storage = JSON.parse(localStorage.getItem("theme")!);
+      if(storage === 'dark'){
+         setTheme('dark')
+      }
+  },[pathName])
 
   return (
     <themeContext.Provider value={{ value: theme, setValue: setTheme }}>

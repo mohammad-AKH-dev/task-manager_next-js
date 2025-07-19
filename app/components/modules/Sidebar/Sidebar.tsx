@@ -51,7 +51,6 @@ export function SidebarDemo() {
   ];
   const [openSidebar, setOpenSidebar] = useState(false);
 
-  const closeSideBar = () => setOpenSidebar((prevState) => !prevState);
   return (
     <div
       className={cn(
@@ -63,10 +62,10 @@ export function SidebarDemo() {
         <SidebarBody className="justify-between gap-10">
           <div
             className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
-            onClick={closeSideBar}
+           
           >
             <>
-              <Logo open={openSidebar} />
+              <Logo />
             </>
             <div className="mt-8 flex flex-col gap-2 gap-y-6">
               {links.map((link, idx) => (
@@ -79,7 +78,7 @@ export function SidebarDemo() {
     </div>
   );
 }
-export const Logo = (open: any) => {
+export const Logo = () => {
   return (
     <div
       className="relative z-20 flex flex-col space-x-2 py-1 text-sm font-normal text-black"
@@ -98,7 +97,7 @@ export const Logo = (open: any) => {
           className=" absolute hidden top-0 left-0 right-0 w-full h-full"
         />
       </div>
-      <div className={`user-infos ${open ? 'flex' : 'hidden'} mt-3 flex-col gap-y-1 text-neutral-700 dark:text-neutral-200`}>
+      <div className={`user-infos flex mt-3 flex-col gap-y-1 text-neutral-700 dark:text-neutral-200`}>
           <h3 className="user-title font-bold text-[17px] ml-10">Mike</h3>
           <span className="user-gmail">mike@gmail.com</span>
       </div>

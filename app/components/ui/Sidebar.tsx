@@ -86,6 +86,7 @@ export const DesktopSidebar = ({
   ...props
 }: React.ComponentProps<typeof motion.div>) => {
   const { open, setOpen, animate } = useSidebar();
+  console.log('open =>',open)
 
   useEffect(() => {
     const taskManagerContentElm = document.querySelector(

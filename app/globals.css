@@ -8,11 +8,49 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+.react-datepicker-wrapper {
+  width: 100% !important;
+}
+
+
+@media all and (max-width: 1130px) {
+  .inputs-wrapper {
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important
+  }
+   .date-picker__wrapper {
+    order: 1 !important;
+  }
+  .date-picker-input {
+    max-width: 356px !important;
+    margin-left: .5rem  !important;
+  }
+  .date-picker {
+    left: 20px !important;
+  }
+}
+
 
 @media all and (max-width: 899px) {
   .tabs-component {
     display: none !important;
   }
+}
+
+@media all and (max-width: 640px) {
+   .inputs-wrapper  {
+    grid-template-columns: repeat(1,minmax(0,1fr)) !important;
+   }
+   .css-11qme3k-MuiFormControl-root {
+    width: 100% !important;
+    margin-left: 0px !important;
+   }
+   .date-picker-input {
+    max-width: none !important;
+    margin-left: 0px !important;
+   }
+   .date-picker {
+    left: 12px !important;
+   }
 }
 
 @media all and (max-width: 540px) {
@@ -26,7 +64,17 @@
     width: 300px !important;
     height: 300px !important;
   }
-  
+  .attachment {
+    flex-direction: column !important;
+    align-items: start !important;
+    row-gap: 10px ;
+  }
+  .attachment-input {
+    width: 100% !important;
+  }
+  .attachment-btn {
+    width: 30% !important;
+  }
 }
 .desk-sidebar {
  min-width: 47px !important
@@ -56,5 +104,11 @@
 @media all and (min-width: 899px) {
   .select-component {
      display: none !important;
+  }
+}
+
+@media all and (min-width: 1130px) {
+  .date-picker-input {
+    max-width: 300px !important
   }
 }
