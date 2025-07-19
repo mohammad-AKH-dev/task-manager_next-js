@@ -89,6 +89,12 @@
    
 }
 
+@media all and (max-width: 400px) {
+  .member-assigned__statuses {
+    grid-template-columns: repeat(1,minmax(0,1fr));
+  }
+}
+
 
 @media all and (max-width: 385px) {
   .css-1kgqhaq-MuiChartsSurface-root {

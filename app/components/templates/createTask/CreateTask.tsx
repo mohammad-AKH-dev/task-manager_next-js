@@ -55,6 +55,7 @@ function CreateTask() {
         onSubmit={handleSubmit(onSubmit)}
         className="my-4 flex flex-col gap-y-8"
       >
+        {/* task title */}
         <div className="input-wrapper flex flex-col gap-y-1">
           <label
             htmlFor="title"
@@ -71,6 +72,7 @@ function CreateTask() {
              border-gray-300 rounded-md p-3 shadow-sm"
           />
         </div>
+        {/* task description */}
         <div className="input-wrapper flex flex-col gap-y-1">
           <label
             htmlFor="description"
@@ -86,6 +88,7 @@ function CreateTask() {
              border-gray-300 rounded-md p-3 shadow-sm"
           />
         </div>
+        {/* priority && date-picker && user selection dialog */}
         <div className="inputs-wrapper grid grid-cols-3 gap-y-3 gap-x-6  xl:gap-x-3">
           <FormControl sx={{ m: 1 }}>
             <InputLabel
@@ -136,6 +139,7 @@ function CreateTask() {
             handleClose={handleClose}
           />
         </div>
+        {/* todos checklist */}
         <div className="input-wrapper flex flex-col gap-y-3">
           <label
             htmlFor="todo"
@@ -160,6 +164,7 @@ function CreateTask() {
           </div>
 
         </div>
+        {/* attachments */}
         <div className="input-wrapper  flex flex-col gap-y-3">
           <label
             htmlFor="attachment"
@@ -185,7 +190,7 @@ function CreateTask() {
         </div>
 
        <button type="submit" className="text-[#0284c7] dark:bg-neutral-700 dark:text-white dark:border
-       dark:border-neutral-600 bg-sky-100 p-3 rounded-lg transition-all hover:bg-sky-300 hover:text-white cursor-pointer">Submit</button>
+       dark:border-neutral-600 bg-sky-100 p-3 rounded-lg transition-all hover:bg-sky-300 hover:text-white cursor-pointer">Create Task</button>
       </form>
     </div>
   );

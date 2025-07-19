@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
+import TeamContent from "../components/templates/Team/TeamContent";
 
 function page() {
   return (
-    <div>
-      team
-    </div>
-  )
+    <section className="team-members-section p-4 pt-8">
+      <TeamContent/>
+    </section>
+  );
 }
 
-export default page
+export default page;
