@@ -34,6 +34,12 @@
   .tabs-component {
     display: none !important;
   }
+  .register-inputs__wrapper {
+    grid-template-columns: repeat(1,minmax(0,1fr));
+  }
+  .register-page__image-wrapper img {
+    min-height: 100%  !important;
+  }
 }
 
 @media all and (max-width: 640px) {

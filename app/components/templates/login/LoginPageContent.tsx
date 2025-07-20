@@ -21,6 +21,7 @@ function LoginPageContent() {
         </span>
         {/* login form  inputs */}
         <div className="login-inputs__wrapper max-w-[400px] mx-auto md:mx-0 md:max-w-[600px] flex flex-col gap-y-6 mt-5">
+            
           <div className="input-wrapper flex flex-col gap-y-2">
             <label htmlFor="email" className="text-start text-[14px]">
               Email Address
@@ -70,7 +71,7 @@ function LoginPageContent() {
           width={1000}
           height={1000}
           src={"/images/login-img.png"}
-          className=" hidden md:block max-w-[400px] lg:max-w-[500px] h-svh"
+          className=" hidden md:block max-w-[400px] max-h-[654px] lg:max-w-[500px] h-svh"
           alt="login-page"
         />
       </div>
