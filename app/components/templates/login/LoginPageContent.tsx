@@ -71,7 +71,7 @@ function LoginPageContent() {
           width={1000}
           height={1000}
           src={"/images/login-img.png"}
-          className=" hidden md:block max-w-[400px] max-h-[654px] lg:max-w-[500px] h-svh"
+          className=" hidden md:block max-w-[400px] max-h-[654px] min-h-full lg:max-w-[500px] h-svh"
           alt="login-page"
         />
       </div>
