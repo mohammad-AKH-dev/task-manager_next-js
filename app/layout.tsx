@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ThemeContextProvider from "./contexts/ThemeContext";
 import Navbar from "./components/modules/Navbar/Navbar";
-import Link from "next/link";
-import { SidebarDemo } from "./components/modules/Sidebar/Sidebar";
+import { Flip, ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,12 +13,24 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) 
-{
+}>) {
   return (
     <html lang="en">
       <body className="font-poppins text-[16px] dark:text-neutral-200">
         <ThemeContextProvider>
+          <ToastContainer
+            position="top-left"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Flip}
+          />
           <section className="taskmanager-content__section">
             <Navbar />
             {children}

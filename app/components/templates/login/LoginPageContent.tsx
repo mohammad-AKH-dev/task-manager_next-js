@@ -1,15 +1,43 @@
 "use client";
 
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+interface loginFormInputs {
+  email: string;
+  password: string;
+}
 
 function LoginPageContent() {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+  const emailRegex = /^[\w+.-]+@[\w-]+\.[a-zA-Z]{2,}$/g;
+  const loginFormSchema = yup.object({
+    email: yup
+      .string()
+      .matches(emailRegex, "please enter a valid email.")
+      .required("please enter email."),
+    password: yup
+      .string()
+      .required("please enter password.")
+      .min(8, "password must be more than 8 characters")
+      .max(16, "password must be less than 16 characters"),
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<loginFormInputs>({
+    resolver: yupResolver(loginFormSchema),
+  });
+  const onSubmit: SubmitHandler<loginFormInputs> = (data) => console.log(data);
   return (
     <div className="login-page__content-wrapper flex">
-      <form
+      <form onSubmit={handleSubmit(onSubmit)}
         action="#"
         className="login-page__form  w-[100%] p-8 sticky px-12 translate-y-14 md:translate-y-24"
       >
@@ -21,7 +49,6 @@ function LoginPageContent() {
         </span>
         {/* login form  inputs */}
         <div className="login-inputs__wrapper max-w-[400px] mx-auto md:mx-0 md:max-w-[600px] flex flex-col gap-y-6 mt-5">
-            
           <div className="input-wrapper flex flex-col gap-y-2">
             <label htmlFor="email" className="text-start text-[14px]">
               Email Address
@@ -29,9 +56,15 @@ function LoginPageContent() {
             <input
               type="email"
               placeholder="john@example.com"
+              {...register("email")}
               className="mt-2 py-2  dark:border dark:border-neutral-700 placeholder:text-gray-400 outline-none placeholder:text-[14px] 
                border-gray-300 rounded-md p-3 shadow-sm"
             />
+            {errors.email && (
+              <span className="text-[10px] translate-x-1 -translate-y-1 text-red-600">
+                {errors.email.message}
+              </span>
+            )}
           </div>
           <div className="input-wrapper relative flex flex-col gap-y-2">
             <label htmlFor="email" className="text-start text-[14px]">
@@ -41,9 +74,15 @@ function LoginPageContent() {
               type={isShowPassword ? "text" : "password"}
               placeholder="Min 8 Characters"
               maxLength={65}
+              {...register("password")}
               className="mt-2 py-2  dark:border dark:border-neutral-700 placeholder:text-gray-400 outline-none placeholder:text-[14px] 
                border-gray-300 rounded-md p-3 shadow-sm"
             />
+            {errors.password && (
+              <span className="text-[10px] translate-x-1 -translate-y-1 text-red-600">
+                {errors.password.message}
+              </span>
+            )}
             <div className="absolute right-3 text-gray-500 cursor-pointer top-11">
               {isShowPassword ? (
                 <IconEyeOff onClick={() => setIsShowPassword(false)} />
