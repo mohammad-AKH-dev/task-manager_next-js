@@ -10,43 +10,36 @@ import {
 import { Sidebar, SidebarBody, SidebarLink } from "../../ui/Sidebar";
 import cn from "@/app/lib/utils";
 import Image from "next/image";
+import useLogOut from "@/app/hooks/useLogOut";
 
 export function SidebarDemo() {
+  const logout = useLogOut()
   const links = [
     {
       label: "Dashboard",
       href: "/",
-      icon: (
-        <IconBrandTabler className="h-5 w-5 shrink-0 text-[17px]" />
-      ),
+      icon: <IconBrandTabler className="h-5 w-5 shrink-0 text-[17px]" />,
     },
     {
       label: "Manage Tasks",
       href: "/tasks",
-      icon: (
-        <IconProgressCheck className="h-5 w-5 shrink-0 text-[17px]" />
-      ),
+      icon: <IconProgressCheck className="h-5 w-5 shrink-0 text-[17px]" />,
     },
     {
       label: "Create Task",
       href: "/create-task",
-      icon: (
-        <IconDeviceIpadPlus className="h-5 w-5 shrink-0 text-[17px]" />
-      ),
+      icon: <IconDeviceIpadPlus className="h-5 w-5 shrink-0 text-[17px]" />,
     },
     {
       label: "Team Members",
       href: "/team",
-      icon: (
-        <IconUsers className="h-5 w-5 shrink-0 text-[17px]" />
-      ),
+      icon: <IconUsers className="h-5 w-5 shrink-0 text-[17px]" />,
     },
     {
       label: "Logout",
       href: "#",
-      icon: (
-        <IconArrowLeft className="h-5 w-5 shrink-0 text-[17px]" />
-      ),
+      icon: <IconArrowLeft className="h-5 w-5 shrink-0 text-[17px]" />,
+      action: logout,
     },
   ];
   const [openSidebar, setOpenSidebar] = useState(false);
@@ -58,12 +51,9 @@ export function SidebarDemo() {
         "min-h-svh" // for your use case, use `h-screen` instead of `h-[60vh]`
       )}
     >
-      <Sidebar open={openSidebar} setOpen={setOpenSidebar}  animate={false}>
+      <Sidebar open={openSidebar} setOpen={setOpenSidebar} animate={false}>
         <SidebarBody className="justify-between gap-10">
-          <div
-            className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
-           
-          >
+          <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             <>
               <Logo />
             </>
@@ -80,9 +70,7 @@ export function SidebarDemo() {
 }
 export const Logo = () => {
   return (
-    <div
-      className="relative z-20 flex flex-col space-x-2 py-1 text-sm font-normal text-black"
-    >
+    <div className="relative z-20 flex flex-col space-x-2 py-1 text-sm font-normal text-black">
       <div className="relative ml-[26px] max-w-[70px] max-h-[70px]">
         <Image
           width={1000}
@@ -97,9 +85,11 @@ export const Logo = () => {
           className=" absolute hidden top-0 left-0 right-0 w-full h-full"
         />
       </div>
-      <div className={`user-infos flex mt-3 flex-col gap-y-1 text-neutral-700 dark:text-neutral-200`}>
-          <h3 className="user-title font-bold text-[17px] ml-10">Mike</h3>
-          <span className="user-gmail">mike@gmail.com</span>
+      <div
+        className={`user-infos flex mt-3 flex-col gap-y-1 text-neutral-700 dark:text-neutral-200`}
+      >
+        <h3 className="user-title font-bold text-[17px] ml-10">Mike</h3>
+        <span className="user-gmail">mike@gmail.com</span>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ interface Links {
   label: string;
   href: string;
   icon: React.JSX.Element | React.ReactNode;
+  action?: () => void
 }
 
 interface SidebarContextProps {
@@ -214,6 +215,7 @@ export const SidebarLink = ({
         </Link>
       ) : (
         <span
+          onClick={link?.action}
           className={cn(
             `flex items-center cursor-pointer text-[15px] xl:text-[17px]  justify-start gap-2  group/sidebar py-2`,
             className
