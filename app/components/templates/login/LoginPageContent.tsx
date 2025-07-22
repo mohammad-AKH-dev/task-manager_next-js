@@ -5,8 +5,13 @@ import * as yup from "yup";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { usersTpye } from "@/app/types/users";
+import { setCookie, url } from "@/app/utils/Utils";
+import { toast } from "react-toastify";
+import useLocalStorage from "@/app/hooks/useLocalStorage";
+import { useRouter } from "next/navigation";
 
 interface loginFormInputs {
   email: string;
@@ -15,6 +20,8 @@ interface loginFormInputs {
 
 function LoginPageContent() {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+  const router = useRouter();
+  const [users, setUsers] = useState<usersTpye>([]);
   const emailRegex = /^[\w+.-]+@[\w-]+\.[a-zA-Z]{2,}$/g;
   const loginFormSchema = yup.object({
     email: yup
@@ -30,14 +37,57 @@ function LoginPageContent() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<loginFormInputs>({
     resolver: yupResolver(loginFormSchema),
   });
-  const onSubmit: SubmitHandler<loginFormInputs> = (data) => console.log(data);
+  const loginHandler: SubmitHandler<loginFormInputs> = async (data) => {
+    if (data) {
+      const res = await fetch(`${url}/users?email=${data.email}`);
+      const users: usersTpye = await res.json();
+      // checks if email is valud
+      const isEmailValid = [...users].some((user) =>
+        user.data.email.match(data.email)
+      );
+         
+      if (!isEmailValid) {
+        toast.error(
+          "No user with this email was found, please register first."
+        );
+      } else {
+        // checks if password is valud
+        const isPasswordValid = users[0].data.password === data.password;
+        if (!isPasswordValid) {
+          toast.error("Password is incorrect.");
+        } else {
+          toast.success("You have successfully logged in.");
+          reset();
+          setCookie("user", users[0].data, 2);
+          useLocalStorage("userId", users[0].userId);
+          useLocalStorage("urlPath", users[0].urlPath);
+          router.push("/");
+        }
+      }
+    }
+  };
+
+  const getUsers = () => {
+    fetch(`${url}/users`)
+      .then((res) => res.json())
+      .then((data) => {
+        setUsers(data);
+      });
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
   return (
     <div className="login-page__content-wrapper flex">
-      <form onSubmit={handleSubmit(onSubmit)}
+      <form
+        onSubmit={handleSubmit(loginHandler)}
         action="#"
         className="login-page__form  w-[100%] p-8 sticky px-12 translate-y-14 md:translate-y-24"
       >
