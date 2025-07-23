@@ -132,7 +132,7 @@ function RegisterPageContent() {
           <img
             src={userImage}
             alt="user-picture"
-            className="max-w-[100px] min-w-[100px] max-h-[100px] min-h-[100px] rounded-full"
+            className="max-w-[100px] object-cover min-w-[100px] max-h-[100px] min-h-[100px] rounded-full"
           />
           <label htmlFor="user" className="cursor-pointer relative block">
             <div className="upload-icon p-1 px-2 absolute top-4 -left-8 rounded-full flex items-center justify-center bg-blue-600 w-fit">
@@ -235,7 +235,7 @@ function RegisterPageContent() {
               <CircularProgress size="20px" sx={{ color: "#fff" }} />
             </div>
           ) : (
-            <span>Login</span>
+            <span>Register</span>
           )}
         </button>
         <span className="login-link mt-4 max-w-[400px] md:max-w-full mx-auto md:mx-0 text-start block text-[14px]">

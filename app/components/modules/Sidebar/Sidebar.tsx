@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   IconArrowLeft,
   IconBrandTabler,
@@ -11,6 +11,7 @@ import { Sidebar, SidebarBody, SidebarLink } from "../../ui/Sidebar";
 import cn from "@/app/lib/utils";
 import Image from "next/image";
 import useLogOut from "@/app/hooks/useLogOut";
+import { getCookie, getLocalStorageItem } from "@/app/utils/Utils";
 
 export function SidebarDemo() {
   const logout = useLogOut()
@@ -69,15 +70,25 @@ export function SidebarDemo() {
   );
 }
 export const Logo = () => {
+  const userData = JSON.parse(getCookie('user')!)
+  const userProfileRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    const localStorageImage = getLocalStorageItem('urlPath')
+    if(localStorageImage && userProfileRef.current) {
+      userProfileRef.current.src = localStorageImage
+    }
+
+  },[])
+
   return (
     <div className="relative z-20 flex flex-col space-x-2 py-1 text-sm font-normal text-black">
-      <div className="relative ml-[26px] max-w-[70px] max-h-[70px]">
-        <Image
-          width={1000}
-          height={1000}
-          src={"/images/user-1.jfif"}
+      <div className="relative max-w-[70px] min-w-[70px] min-h-[70px] max-h-[70px]">
+        <img
+          ref={userProfileRef}
+          src={'/images/user-member.avif'}
           alt="user-profile"
-          className="rounded-full w-full "
+          className="rounded-full h-full object-cover w-full "
         />
         <input
           type="file"
@@ -88,8 +99,8 @@ export const Logo = () => {
       <div
         className={`user-infos flex mt-3 flex-col gap-y-1 text-neutral-700 dark:text-neutral-200`}
       >
-        <h3 className="user-title font-bold text-[17px] ml-10">Mike</h3>
-        <span className="user-gmail">mike@gmail.com</span>
+        <h3 className="user-title max-w-[174px] overflow-hidden text-ellipsis font-bold text-[17px]">{userData.username}</h3>
+        <span className="user-gmail max-w-[174px] overflow-hidden text-ellipsis ">{userData.email}</span>
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import { setCookie, url } from "@/app/utils/Utils";
 import { toast } from "react-toastify";
 import useLocalStorage from "@/app/hooks/useLocalStorage";
 import { useRouter } from "next/navigation";
+import { CircularProgress } from "@mui/material";
 
 interface loginFormInputs {
   email: string;
@@ -20,6 +21,7 @@ interface loginFormInputs {
 
 function LoginPageContent() {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const router = useRouter();
   const [users, setUsers] = useState<usersTpye>([]);
   const emailRegex = /^[\w+.-]+@[\w-]+\.[a-zA-Z]{2,}$/g;
@@ -43,32 +45,44 @@ function LoginPageContent() {
     resolver: yupResolver(loginFormSchema),
   });
   const loginHandler: SubmitHandler<loginFormInputs> = async (data) => {
-    if (data) {
-      const res = await fetch(`${url}/users?email=${data.email}`);
-      const users: usersTpye = await res.json();
-      // checks if email is valud
-      const isEmailValid = [...users].some((user) =>
-        user.data.email.match(data.email)
-      );
-         
-      if (!isEmailValid) {
-        toast.error(
-          "No user with this email was found, please register first."
+    setIsDisabled(true)
+
+    try {
+      if (data) {
+        const res = await fetch(`${url}/users?email=${data.email}`);
+        const users: usersTpye = await res.json();
+        // checks if email is valid
+        const isEmailValid = [...users].some((user) =>
+          user.data.email.match(data.email)
         );
-      } else {
-        // checks if password is valud
-        const isPasswordValid = users[0].data.password === data.password;
-        if (!isPasswordValid) {
-          toast.error("Password is incorrect.");
+  
+        if (!isEmailValid) {
+          toast.error(
+            "No user with this email was found, please register first."
+          );
         } else {
-          toast.success("You have successfully logged in.");
-          reset();
-          setCookie("user", users[0].data, 2);
-          useLocalStorage("userId", users[0].userId);
-          useLocalStorage("urlPath", users[0].urlPath);
-          router.push("/");
+          // checks if password is true
+          const mainUser = [...users].find(user => user.data.email.match(data.email))
+          if (mainUser?.data.password !== data.password) {
+            toast.error("Password is incorrect.");
+          } else {
+            toast.success("You have successfully logged in.");
+            reset();
+            setCookie("user", mainUser.data, 2);
+            useLocalStorage("userId", mainUser.userId);
+            useLocalStorage("urlPath", mainUser.urlPath);
+            router.push("/");
+          }
         }
       }
+      
+    } catch (error) {
+      toast.error('something went wrong, please try again.')
+    }
+    finally {
+      setTimeout(() => {
+        setIsDisabled(false)
+      },3000)
     }
   };
 
@@ -144,9 +158,16 @@ function LoginPageContent() {
         </div>
         <button
           type="submit"
+          disabled={isDisabled}
           className="mt-6 cursor-pointer bg-blue-600 text-white block w-full max-w-[400px] mx-auto md:mx-0 md:max-w-[600px] rounded-sm p-2 "
         >
-          Login
+          {isDisabled ? (
+            <div className="loader translate-y-1">
+              <CircularProgress size="20px" sx={{ color: "#fff" }} />
+            </div>
+          ) : (
+            <span>Login</span>
+          )}
         </button>
         <span className="register-link mt-4 max-w-[400px] md:max-w-full mx-auto md:mx-0 text-start block text-[14px]">
           Don't have an account?{" "}

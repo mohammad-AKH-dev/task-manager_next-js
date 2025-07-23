@@ -49,5 +49,7 @@ export function getCookie(name: string) {
 
 export const getLocalStorageItem = (name: string) => {
    const value = JSON.parse(localStorage.getItem(name)!)
+
+   return value
 }
 
