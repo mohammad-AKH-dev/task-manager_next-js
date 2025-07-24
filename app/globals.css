@@ -12,6 +12,10 @@
   width: 100% !important;
 }
 
+html.dark .css-sjvn3c {
+  color: #fff !important
+}
+
 html.dark .css-1yf54bd-MuiChartsLegend-root {
    color: #fff !important
 }
