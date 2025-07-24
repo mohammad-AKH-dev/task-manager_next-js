@@ -24,6 +24,10 @@ html.dark .MuiChartsAxis-tickLabel > tspan {
   fill: #fff !important;
 }
 
+html.dark .css-sjvn3c .MuiChartsLegend-series {
+  fill: #fff !important
+}
+
 
 @media all and (max-width: 1130px) {
   .inputs-wrapper {
