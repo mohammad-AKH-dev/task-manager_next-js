@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React from "react";
 import MemberStatusBox from "./MemberStatusBox";
 import { teamMemberType } from "@/app/types/teamMebers";
@@ -11,9 +10,7 @@ function MemberBox({member}: MemberBoxPropsType) {
   return (
     <div className='p-6 bg-white text-[14px] text-gray-500 rounded-lg dark:border-neutral-700 dark:bg-neutral-800 shadow-lg"'>
       <div className="member-infos__wrapper flex gap-x-4 items-center">
-        <Image
-          width={1000}
-          height={1000}
+        <img
           className="max-w-[50px] rounded-full"
           src={member.profile}
           alt="user"
