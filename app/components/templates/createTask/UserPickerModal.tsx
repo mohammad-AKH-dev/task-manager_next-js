@@ -9,11 +9,16 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { IconUsers } from "@tabler/icons-react";
 import UserBox from "../../modules/UserBox/UserBox";
+import { teamMembersType } from "@/app/types/teamMebers";
+import { Avatar, AvatarGroup } from "@mui/material";
 
 type UsersMultipleDialogPropsType = {
   open: boolean;
   handleClose: () => void;
   handleClickOpen: () => void;
+  users: teamMembersType;
+  action: React.Dispatch<React.SetStateAction<teamMembersType | []>>;
+  selectedTeam: teamMembersType | [];
 };
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -29,6 +34,9 @@ export default function UsersMultipleDialog({
   open,
   handleClose,
   handleClickOpen,
+  users,
+  action,
+  selectedTeam,
 }: UsersMultipleDialogPropsType) {
   return (
     <React.Fragment>
@@ -37,11 +45,21 @@ export default function UsersMultipleDialog({
        gap-x-2 cursor-pointer items-center justify-center  max-h-[57px] px-6"
         onClick={handleClickOpen}
       >
+        {selectedTeam.length ? (
+          <AvatarGroup max={4} sx={{flexWrap: 'wrap'}}>
+            {selectedTeam.map((member) => (
+              <Avatar src={member.profile} />
+            ))}
+          </AvatarGroup>
+        ) : (
+          <>
+            <IconUsers className="w-[18px]" />
+            add members
+          </>
+        )}
         <span className="text-[12px] text-gray-500 dark:text-white absolute left-2.5 -top-[11px] z-[99]">
           Assign To
         </span>
-        <IconUsers className="w-[18px]" />
-        add members
       </div>
       <BootstrapDialog
         onClose={handleClose}
@@ -64,23 +82,17 @@ export default function UsersMultipleDialog({
           <CloseIcon />
         </IconButton>
         <DialogContent dividers>
-          <UserBox />
-          <UserBox />
-          <UserBox />
-          <UserBox />
-          <UserBox />
-          <UserBox />
-          <UserBox />
-          <UserBox />
-          <UserBox />
-          <UserBox /> 
-          
+          {users.map((user) => (
+            <UserBox
+              selectedTeam={selectedTeam}
+              action={action}
+              key={user.id}
+              {...user}
+            />
+          ))}
         </DialogContent>
         <DialogActions>
-          <Button  onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button className="bg-red-600"  onClick={handleClose}>
+          <Button className="bg-red-600" onClick={handleClose}>
             Done
           </Button>
         </DialogActions>

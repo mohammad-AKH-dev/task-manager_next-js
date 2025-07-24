@@ -2,43 +2,177 @@
 
 import { themeContext } from "@/app/contexts/ThemeContext";
 import {
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  TextField,
 } from "@mui/material";
-import React, { useContext, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import React, { useContext, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import UsersMultipleDialog from "./UserPickerModal";
-import { IconPaperclip, IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
+import { getLocalStorageItem, url } from "@/app/utils/Utils";
+import { todosType } from "@/app/types/todos";
+import { attachmentsType } from "@/app/types/attachments";
+import { teamMembersType } from "@/app/types/teamMebers";
+import { toast } from "react-toastify";
+import { tasksType } from "@/app/types/tasks";
 
-type Inputs = {
-  title: string;
-  description: string;
-  priority: "Low" | "Meduim" | "High";
+type CreateTaskPropsType = {
+  members: teamMembersType;
 };
 
-function CreateTask() {
+function CreateTask({ members }: CreateTaskPropsType) {
   const ThemeContext = useContext(themeContext);
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState<Date | null>(new Date());
+  const userId = getLocalStorageItem("userId");
+  const [tasks, setTasks] = useState<tasksType>([]);
+  const [todo, setTodo] = useState<string>("");
+  const [attachment, setAttachment] = useState<string>("");
+  const [isSubmited, setIsSubmited] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<teamMembersType | []>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [todos, setTodos] = useState<todosType>([]);
+  const [attachments, setAttachments] = useState<attachmentsType>([]);
   const [priority, setPriority] = useState<"Low" | "Meduim" | "High">("Low");
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Inputs>({
-    defaultValues: {
-      title: "",
-      description: "",
-      priority: priority,
-    },
-  });
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
+  const getTasks = () => {
+    fetch(`${url}/tasks`)
+      .then((res) => res.json())
+      .then((data) => setTasks(data));
+  };
+
+  useEffect(() => {
+    getTasks();
+  }, []);
+
+  const onSubmit = async () => {
+    // checks if inputs are valid
+    if (
+      todos.length &&
+      selectedTeam.length &&
+      title.trim().length &&
+      description.trim().length
+    ) {
+      setIsSubmited(true);
+      const checkIfTaskRepeated = tasks.some(
+        (task) =>
+          task.title.toLowerCase() === title.toLowerCase() ||
+          task.description.toLowerCase() === description.toLowerCase()
+      );
+      //  checks if task already exist
+      if (checkIfTaskRepeated) {
+        toast.error("This task has already been added.");
+        setIsSubmited(false);
+      } else {
+        const newTask = {
+          id: crypto.randomUUID(),
+          userId,
+          title,
+          description,
+          priority,
+          deadLine: dueDate?.toDateString(),
+          team: selectedTeam,
+          todos: todos,
+          attachments: attachments,
+        };
+        try {
+          const res = await fetch(`${url}/tasks`, {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify(newTask),
+          });
+          if (res.ok) {
+            toast.success("Task added successfully.");
+            getTasks();
+            setTitle("");
+            setDescription("");
+            setTodos([]);
+            setAttachments([]);
+            setSelectedTeam([]);
+            setPriority("Low");
+          }
+        } catch (error) {
+          toast.error("Something went wrong. Please try again.");
+        }
+      }
+    } else {
+      toast.error(
+        "plase write a title and description beside choose some members for task."
+      );
+    }
+    setTimeout(() => {
+      setIsSubmited(false);
+    }, 3000);
+  };
+ 
+  // create check lists todo
+  const createTodo = (value: string) => {
+    // if todo input is not empty
+    if (value.trim().length) {
+      // if todos array don't have more than 5 todos
+      if (todos.length < 5) {
+        // if incoming todo is not repeated before
+        const checkIfRepeatedTodo = [...todos].some(
+          (todo) => todo.value.toLowerCase() === value.toLowerCase()
+        );
+        if (checkIfRepeatedTodo) {
+          toast.error("You added this todo before.");
+        } else {
+          const newTodo = {
+            id: crypto.randomUUID(),
+            value,
+            isDone: false,
+          };
+          setTodos((prev) => [...prev, newTodo]);
+          setTodo("");
+        }
+      } else {
+        toast.error("You just can add 5 todos.");
+      }
+    } else {
+      toast.error("todo input is empty. please write something!");
+    }
+  };
+
+  // create attachment for task
+  const createAttachment = (value: string) => {
+    if (value.trim().length) {
+      const checkIfRepeatedAttachment = [...attachments].some(
+        (attachment) => attachment.value.toLowerCase() === value.toLowerCase()
+      );
+      if (checkIfRepeatedAttachment) {
+        toast.error("You added this todo attachment before.");
+      } else {
+        const newAttachment = {
+          id: crypto.randomUUID(),
+          value,
+        };
+        setAttachments((prev) => [...prev, newAttachment]);
+        setAttachment("");
+      }
+    } else {
+      toast.error("attachment input is empty. please write something!");
+    }
+  };
+ 
+  // remove special todo
+  const removeTodo = (id: string) => {
+    setTodos((prev) => [...prev].filter((todo) => todo.id !== id));
+  };
+  // remove special attachment
+  const removeAttachment = (id: string) => {
+    setAttachments((prev) =>
+      [...prev].filter((attachment) => attachment.id !== id)
+    );
+  };
 
   const handleClickOpen = () => {
     setIsOpen(true);
@@ -52,8 +186,17 @@ function CreateTask() {
         create task
       </h3>
       <form
-        onSubmit={handleSubmit(onSubmit)}
         className="my-4 flex flex-col gap-y-8"
+        onKeyDown={(event) => {
+          // prevent submitting form with enter
+          if (event.key === "Enter") {
+            event.preventDefault();
+          }
+        }}
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit();
+        }}
       >
         {/* task title */}
         <div className="input-wrapper flex flex-col gap-y-1">
@@ -66,7 +209,8 @@ function CreateTask() {
           <input
             id="title"
             placeholder="Create App Ui"
-            {...register("title")}
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
             type="text"
             className="mt-2 py-2 block w-full dark:border dark:border-neutral-700 placeholder:text-gray-400 outline-none placeholder:text-[17px] 
              border-gray-300 rounded-md p-3 shadow-sm"
@@ -83,7 +227,8 @@ function CreateTask() {
           <textarea
             id="description"
             placeholder="Description"
-            {...register("description")}
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
             className="mt-2 py-2 block w-full dark:border-neutral-700 dark:border min-h-[64px] max-h-[120px] placeholder:text-gray-400 outline-none placeholder:text-[17px] 
              border-gray-300 rounded-md p-3 shadow-sm"
           />
@@ -129,11 +274,14 @@ function CreateTask() {
             <DatePicker
               dateFormat="yyyy/MM/dd"
               className="p-4 w-full date-picker-input mt-2 border-gray-300 dark:border-neutral-700 border rounded-sm"
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              selected={dueDate}
+              onChange={(date) => setDueDate(date)}
             />
           </div>
           <UsersMultipleDialog
+            selectedTeam={selectedTeam}
+            action={setSelectedTeam}
+            users={members}
             open={isOpen}
             handleClickOpen={handleClickOpen}
             handleClose={handleClose}
@@ -147,22 +295,50 @@ function CreateTask() {
           >
             Todo Checklist
           </label>
-          <div className="flex attachment items-center gap-x-6">
-
-          <input
-            type="text"
-            id="todo"
-            placeholder="Enter Task"
-            className="mt-2 py-2 attachment-input block w-[80%] md:w-[85%] dark:border dark:border-neutral-700 placeholder:text-gray-400 outline-none placeholder:text-[17px] 
-             border-gray-300 rounded-md p-3 shadow-sm"
-          />
-          <button type="button" className="flex attachment-btn cursor-pointer mt-2 dark:bg-neutral-700 dark:border-neutral-500 dark:border
-           justify-center md:w-[15%] items-center gap-x-2 p-2 px-3 bg-[#e5e5e5] rounded-md">
-            <IconPlus className="w-[17px]"/>
-            Add
-          </button>
+          {/* todos */}
+          <div className="todos flex flex-col gap-y-3 text-[14px]">
+            {todos.length
+              ? todos.map((todo, index) => (
+                  <div className="todo flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] p-2 w-full">
+                    <div className="todo-wrapper flex items-center gap-x-2">
+                      <span className="todo_index text-gray-400">
+                        0{index + 1}
+                      </span>
+                      <h4 className="todo-title text-title">{todo.value}</h4>
+                    </div>
+                    <IconTrash
+                      className="text-red-600 w-[20px] cursor-pointer"
+                      onClick={() => removeTodo(todo.id)}
+                    />
+                  </div>
+                ))
+              : null}
           </div>
-
+          <div className="flex attachment items-center gap-x-6">
+            <input
+              type="text"
+              id="todo"
+              value={todo}
+              onChange={(event) => setTodo(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  createTodo(todo);
+                }
+              }}
+              placeholder="Enter Task"
+              className="mt-2 py-2 attachment-input block w-[80%] md:w-[85%] dark:border dark:border-neutral-700 placeholder:text-gray-400 outline-none placeholder:text-[17px] 
+             border-gray-300 rounded-md p-3 shadow-sm"
+            />
+            <button
+              onClick={() => createTodo(todo)}
+              type="button"
+              className="flex attachment-btn cursor-pointer mt-2 dark:bg-neutral-700 dark:border-neutral-500 dark:border
+           justify-center md:w-[15%] items-center gap-x-2 p-2 px-3 bg-[#e5e5e5] rounded-md"
+            >
+              <IconPlus className="w-[17px]" />
+              Add
+            </button>
+          </div>
         </div>
         {/* attachments */}
         <div className="input-wrapper  flex flex-col gap-y-3">
@@ -172,25 +348,67 @@ function CreateTask() {
           >
             Add Attachments
           </label>
-          <div className="flex attachment items-center gap-x-6">
-
-          <input
-            type="text"
-            id="attachment"
-            placeholder='Add File Link'
-            className="mt-2 py-2 attachment-input block w-[80%] md:w-[85%] dark:border dark:border-neutral-700 placeholder:text-gray-400 outline-none placeholder:text-[17px] 
-             border-gray-300 rounded-md p-3 shadow-sm"
-          />
-          <button type="button" className="flex mt-2 attachment-btn cursor-pointer dark:text-white dark:bg-neutral-700 dark:border-neutral-500 dark:border justify-center md:w-[15%] items-center gap-x-2 p-2 px-3 bg-[#e5e5e5] rounded-md">
-            <IconPlus className="w-[17px]"/>
-            Add
-          </button>
+          {/* attachments content */}
+          <div className="attachments flex flex-col gap-y-3 text-[14px]">
+            {attachments.length
+              ? attachments.map((attachment, index) => (
+                  <div className="attchments-content flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] p-2 w-full">
+                    <div className="attachment-wrapper flex items-center gap-x-2">
+                      <span className="attachment_index text-gray-400">
+                        0{index + 1}
+                      </span>
+                      <h4 className="attachment-title text-title">
+                        {attachment.value}
+                      </h4>
+                    </div>
+                    <IconTrash
+                      className="text-red-600 w-[20px]"
+                      onClick={() => removeAttachment(attachment.id)}
+                    />
+                  </div>
+                ))
+              : null}
           </div>
-
+          <div className="flex attachment items-center gap-x-6">
+            <input
+              type="text"
+              id="attachment"
+              value={attachment}
+              onChange={(event) => setAttachment(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  createAttachment(attachment);
+                }
+              }}
+              placeholder="Add File Link"
+              className="mt-2 py-2 attachment-input block w-[80%] md:w-[85%] dark:border dark:border-neutral-700 placeholder:text-gray-400 outline-none placeholder:text-[17px] 
+             border-gray-300 rounded-md p-3 shadow-sm"
+            />
+            <button
+              type="button"
+              onClick={() => createAttachment(attachment)}
+              className="flex mt-2 attachment-btn cursor-pointer dark:text-white dark:bg-neutral-700 dark:border-neutral-500 dark:border justify-center md:w-[15%] items-center gap-x-2 p-2 px-3 bg-[#e5e5e5] rounded-md"
+            >
+              <IconPlus className="w-[17px]" />
+              Add
+            </button>
+          </div>
         </div>
 
-       <button type="submit" className="text-[#0284c7] dark:bg-neutral-700 dark:text-white dark:border
-       dark:border-neutral-600 bg-sky-100 p-3 rounded-lg transition-all hover:bg-sky-300 hover:text-white cursor-pointer">Create Task</button>
+        <button
+          type="submit"
+          disabled={isSubmited}
+          className="text-[#0284c7] dark:bg-neutral-700 dark:text-white dark:border
+       dark:border-neutral-600 bg-sky-100 p-3 rounded-lg transition-all hover:bg-sky-300 hover:text-white cursor-pointer"
+        >
+          {isSubmited ? (
+            <div className="loader translate-y-1">
+              <CircularProgress size="20px" sx={{ color: "#fff" }} />
+            </div>
+          ) : (
+            <span>Create Task</span>
+          )}
+        </button>
       </form>
     </div>
   );
