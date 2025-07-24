@@ -3,11 +3,18 @@ import TeamContent from "../components/templates/Team/TeamContent";
 import { SidebarDemo } from "../components/modules/Sidebar/Sidebar";
 import { url } from "../utils/Utils";
 import { teamMembersType } from "../types/teamMebers";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 async function page() {
+  const cookieStore = await cookies();
+  const user = cookieStore.get("user");
+  if (!user) {
+    redirect("/login");
+  }
 
-  const res = await fetch(`${url}/members`)
-  const team: teamMembersType = await res.json()
+  const res = await fetch(`${url}/members`);
+  const team: teamMembersType = await res.json();
 
   return (
     <div className="taskmanager-content__wrapper flex gap-x-6 sm:gap-x-5 md:gap-x-8 relative">

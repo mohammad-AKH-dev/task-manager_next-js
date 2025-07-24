@@ -1,10 +1,16 @@
-import Image from "next/image";
-import Navbar from "./components/modules/Navbar/Navbar";
 import DashboardContent from "./components/templates/Dashboard/DashboardContent";
 import { SidebarDemo } from "./components/modules/Sidebar/Sidebar";
 import { url } from "./utils/Utils";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
+  const cookieStore = await cookies()
+  const user = cookieStore.get('user')
+  if(!user) {
+    redirect('/login')
+  }
+
   const res = await fetch(`${url}/tasks`)
   const tasks = await res.json()
 

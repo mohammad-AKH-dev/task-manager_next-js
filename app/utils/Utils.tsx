@@ -1,7 +1,3 @@
-
-import Swal from 'sweetalert2'
-
-
 export const url = "https://task-manager-api-zpsa.onrender.com/api";
 
 export const uploadImageHandler = (
@@ -48,8 +44,7 @@ export function getCookie(name: string) {
 }
 
 export const getLocalStorageItem = (name: string) => {
-   const value = JSON.parse(localStorage.getItem(name)!)
+  const value = JSON.parse(localStorage.getItem(name)!);
 
-   return value
-}
-
+  return value;
+};

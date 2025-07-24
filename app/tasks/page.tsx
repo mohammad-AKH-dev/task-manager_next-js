@@ -3,8 +3,16 @@ import TasksContent from "../components/templates/tasks/TasksContent";
 import { SidebarDemo } from "../components/modules/Sidebar/Sidebar";
 import { url } from "../utils/Utils";
 import { tasksType, taskType } from "../types/tasks";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 async function page() {
+   const cookieStore = await cookies()
+    const user = cookieStore.get('user')
+    if(!user) {
+      redirect('/login')
+    }
+
   const res = await fetch(`${url}/tasks`);
   const tasks: tasksType = await res.json();
 

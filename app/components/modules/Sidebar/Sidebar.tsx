@@ -12,9 +12,21 @@ import cn from "@/app/lib/utils";
 import Image from "next/image";
 import useLogOut from "@/app/hooks/useLogOut";
 import { getCookie, getLocalStorageItem } from "@/app/utils/Utils";
+import { usePathname, useRouter } from "next/navigation";
 
 export function SidebarDemo() {
-  const logout = useLogOut()
+  const logout = useLogOut();
+  const router = useRouter();
+  const pathName = usePathname();
+  const userId = getLocalStorageItem("userId");
+  const user = JSON.parse(getCookie("user")!);
+
+  useEffect(() => {
+    console.log("user cookie =>", user);
+    if (!user || !userId) {
+      router.replace("/login");
+    }
+  }, [pathName]);
   const links = [
     {
       label: "Dashboard",
@@ -70,23 +82,22 @@ export function SidebarDemo() {
   );
 }
 export const Logo = () => {
-  const userData = JSON.parse(getCookie('user')!)
-  const userProfileRef = useRef<HTMLImageElement>(null)
+  const userData = JSON.parse(getCookie("user")!);
+  const userProfileRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    const localStorageImage = getLocalStorageItem('urlPath')
-    if(localStorageImage && userProfileRef.current) {
-      userProfileRef.current.src = localStorageImage
+    const localStorageImage = getLocalStorageItem("urlPath");
+    if (localStorageImage && userProfileRef.current) {
+      userProfileRef.current.src = localStorageImage;
     }
-
-  },[])
+  }, []);
 
   return (
     <div className="relative z-20 flex flex-col space-x-2 py-1 text-sm font-normal text-black">
       <div className="relative max-w-[70px] min-w-[70px] min-h-[70px] max-h-[70px]">
         <img
           ref={userProfileRef}
-          src={'/images/user-member.avif'}
+          src={"/images/user-member.avif"}
           alt="user-profile"
           className="rounded-full h-full object-cover w-full "
         />
@@ -99,8 +110,12 @@ export const Logo = () => {
       <div
         className={`user-infos flex mt-3 flex-col gap-y-1 text-neutral-700 dark:text-neutral-200`}
       >
-        <h3 className="user-title max-w-[174px] overflow-hidden text-ellipsis font-bold text-[17px]">{userData.username}</h3>
-        <span className="user-gmail max-w-[174px] overflow-hidden text-ellipsis ">{userData.email}</span>
+        <h3 className="user-title max-w-[174px] overflow-hidden text-ellipsis font-bold text-[17px]">
+          {userData.username}
+        </h3>
+        <span className="user-gmail max-w-[174px] overflow-hidden text-ellipsis ">
+          {userData.email}
+        </span>
       </div>
     </div>
   );

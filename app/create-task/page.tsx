@@ -3,8 +3,15 @@ import CreateTask from "../components/templates/createTask/CreateTask";
 import { SidebarDemo } from "../components/modules/Sidebar/Sidebar";
 import { teamMembersType } from "../types/teamMebers";
 import { url } from "../utils/Utils";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 async function page() {
+   const cookieStore = await cookies()
+    const user = cookieStore.get('user')
+    if(!user) {
+      redirect('/login')
+    }
   const resMembers = await fetch(`${url}/members`)
   const members: teamMembersType = await resMembers.json()
 
