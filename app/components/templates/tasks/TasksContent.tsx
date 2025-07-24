@@ -5,6 +5,7 @@ import TabsComponent from "./TabsComponent";
 import TaskBox from "../../modules/Tasks/TaskBox";
 import { tasksType } from "@/app/types/tasks";
 import EmptyTaskState from "../../modules/Tasks/EmptyTaskState";
+import { getLocalStorageItem } from "@/app/utils/Utils";
 
 type TasksContentPropsType = {
   tasks: tasksType;
@@ -40,12 +41,13 @@ function taskFilterReducer(tasks: tasksType, selectedStatus: string) {
 
 function TasksContent({ tasks }: TasksContentPropsType) {
   const [selectedTasks, setSelectedTasks] = useState("all");
+  const userId = getLocalStorageItem('userId')
   const filteredTasks = useMemo(
-  () => taskFilterReducer(tasks, selectedTasks),
+  () => taskFilterReducer([...tasks].filter(task => task.userId === userId), selectedTasks),
   [tasks, selectedTasks]
 );
   const allTabs = ["all", "pending", "in progress", "completed"];
-  
+
   return (
     <>
       {/* tasks header */}
