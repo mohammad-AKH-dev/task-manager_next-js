@@ -3,7 +3,6 @@ import CreateTask from "../components/templates/createTask/CreateTask";
 import { SidebarDemo } from "../components/modules/Sidebar/Sidebar";
 import { teamMembersType } from "../types/teamMebers";
 import { url } from "../utils/Utils";
-import { tasksType } from "../types/tasks";
 
 async function page() {
   const resMembers = await fetch(`${url}/members`)

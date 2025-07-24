@@ -76,6 +76,7 @@ function CreateTask({ members }: CreateTaskPropsType) {
           title,
           description,
           priority,
+          startDate: new Date().toDateString(),
           deadLine: dueDate?.toDateString(),
           team: selectedTeam,
           todos: todos,
@@ -98,6 +99,7 @@ function CreateTask({ members }: CreateTaskPropsType) {
             setAttachments([]);
             setSelectedTeam([]);
             setPriority("Low");
+            window.location.reload()
           }
         } catch (error) {
           toast.error("Something went wrong. Please try again.");
