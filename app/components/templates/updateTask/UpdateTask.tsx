@@ -58,7 +58,7 @@ function UpdateTask({ members, mainTask }: CreateTaskPropsType) {
     setDescription(mainTask.description);
     setTodos(mainTask.todos);
     setPriority(mainTask.priority);
-    setDueDate(mainTask.deadLine);
+    setDueDate(new Date(mainTask.deadLine));
     setSelectedTeam(mainTask.team);
     setAttachments(mainTask.attachments);
   }, []);
