@@ -1,31 +1,51 @@
 "use client";
 
-import { Tab, Tabs } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import TabsComponent from "./TabsComponent";
 import TaskBox from "../../modules/Tasks/TaskBox";
 import { tasksType } from "@/app/types/tasks";
 import EmptyTaskState from "../../modules/Tasks/EmptyTaskState";
-import { getLocalStorageItem } from "@/app/utils/Utils";
 
 type TasksContentPropsType = {
   tasks: tasksType;
 };
 
+function taskFilterReducer(tasks: tasksType, selectedStatus: string) {
+  switch (selectedStatus) {
+    case "all":
+      return [...tasks];
+
+    case "pending":
+      return [...tasks].filter(
+        (task) => task.todos.filter((todo) => todo.isDone === true).length === 0
+      );
+
+    case "in progress":
+      return [...tasks].filter((task) => {
+        // length of done tasks
+        const doneCount = task.todos.filter((todo) => todo.isDone).length;
+        return doneCount > 0 && doneCount < task.todos.length;
+      });
+
+    case "completed":
+      return [...tasks].filter(
+        (task) =>
+          task.todos.length > 0 && task.todos.every((todo) => todo.isDone)
+      );
+
+    default:
+      return [...tasks];
+  }
+}
+
 function TasksContent({ tasks }: TasksContentPropsType) {
   const [selectedTasks, setSelectedTasks] = useState("all");
+  const filteredTasks = useMemo(
+  () => taskFilterReducer(tasks, selectedTasks),
+  [tasks, selectedTasks]
+);
   const allTabs = ["all", "pending", "in progress", "completed"];
-  const userId = getLocalStorageItem('userId')
-  const [mainTasks, setMainTasks] = useState<tasksType>([]);
-
-  useEffect(() => {
-    setMainTasks(() => tasks.filter(task => task.userId === userId))
-  },[])
-
-  useEffect(() => {
-    console.log(selectedTasks);
-  }, [selectedTasks]);
-
+  
   return (
     <>
       {/* tasks header */}
@@ -44,33 +64,17 @@ function TasksContent({ tasks }: TasksContentPropsType) {
       {/* tasks */}
       <div
         className={`tasks-wrapper ${
-          mainTasks.length ?
-          "grid grid-cols-1 lg:grid-cols-2 gap-y-6 xl:grid-cols-3 gap-x-6 mt-8" : null
+          filteredTasks.length
+            ? "grid grid-cols-1 lg:grid-cols-2 gap-y-6 xl:grid-cols-3 gap-x-6 mt-8"
+            : null
         }`}
-      > {
-        mainTasks.length &&
-          selectedTasks === "all" ?
-          mainTasks.map((task) => <TaskBox {...task} />) : null}
-
-        {mainTasks.length &&
-          selectedTasks === "pending" ?
-          mainTasks
-            .filter((task) => task.todos.length === 5)
-            .map((task) => <TaskBox {...task} />): null}
-
-        {mainTasks.length &&
-          selectedTasks === "in progress" ?
-          mainTasks
-            .filter((task) => task.todos.length > 0 && task.todos.length < 5)
-            .map((task) => <TaskBox {...task} />): null}
-
-        {mainTasks.length &&
-          selectedTasks === "completed" ?
-          mainTasks
-            .filter((task) => task.todos.length === 0)
-            .map((task) => <TaskBox {...task} />): null}
-
-        {!mainTasks.length ? <EmptyTaskState /> : null}
+      >
+        {" "}
+        {filteredTasks.length ? (
+          filteredTasks.map((task) => <TaskBox key={task.id} {...task} />)
+        ) : (
+          <EmptyTaskState />
+        )}
       </div>
     </>
   );

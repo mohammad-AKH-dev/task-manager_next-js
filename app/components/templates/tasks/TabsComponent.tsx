@@ -12,7 +12,7 @@ import { themeContext } from "@/app/contexts/ThemeContext";
 
 type TabsComponentPropsType = {
   tabs: string[];
-  setMainTab: React.Dispatch<React.SetStateAction<string>>;
+  setMainTab:  React.ActionDispatch<[selectedStatus: string]>;
   mainTab: string;
 };
 

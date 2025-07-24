@@ -22,7 +22,6 @@ export function SidebarDemo() {
   const user = JSON.parse(getCookie("user")!);
 
   useEffect(() => {
-    console.log("user cookie =>", user);
     if (!user || !userId) {
       router.replace("/login");
     }
