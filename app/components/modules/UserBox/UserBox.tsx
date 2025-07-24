@@ -25,7 +25,6 @@ function UserBox(props: UserBoxPropsType) {
     props;
 
   const removeSelectedMember = () => {
-    console.log("name =>", name);
     action((prev) => [...prev].filter((member) => member.id !== id));
   };
 
@@ -85,7 +84,6 @@ function UserBox(props: UserBoxPropsType) {
       </div>
       <Checkbox
         checked={false}
-        onClick={() => console.log("im false")}
         {...label}
       />
     </div>

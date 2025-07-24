@@ -122,7 +122,6 @@ function UpdateTask({ members, mainTask }: CreateTaskPropsType) {
   };
 
   const removeTask = (id: string) => {
-    console.log(id);
     Swal.fire({
       title: "Delete",
       icon: "warning",
