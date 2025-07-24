@@ -305,12 +305,13 @@ function CreateTask({ members }: CreateTaskPropsType) {
           <div className="todos flex flex-col gap-y-3 text-[14px]">
             {todos.length
               ? todos.map((todo, index) => (
-                  <div className="todo flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] p-2 w-full">
+                  <div className="todo flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] dark:bg-neutral-700 dark:border
+                  dark:border-neutral-500 p-2 w-full">
                     <div className="todo-wrapper flex items-center gap-x-2">
                       <span className="todo_index text-gray-400">
                         0{index + 1}
                       </span>
-                      <h4 className="todo-title text-title">{todo.value}</h4>
+                      <h4 className="todo-title text-title dark:text-white">{todo.value}</h4>
                     </div>
                     <IconTrash
                       className="text-red-600 w-[20px] cursor-pointer"
@@ -358,12 +359,13 @@ function CreateTask({ members }: CreateTaskPropsType) {
           <div className="attachments flex flex-col gap-y-3 text-[14px]">
             {attachments.length
               ? attachments.map((attachment, index) => (
-                  <div className="attchments-content flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] p-2 w-full">
+                  <div className="attchments-content dark:bg-neutral-700 dark:border
+                  dark:border-neutral-500 flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] p-2 w-full">
                     <div className="attachment-wrapper flex items-center gap-x-2">
                       <span className="attachment_index text-gray-400">
                         0{index + 1}
                       </span>
-                      <h4 className="attachment-title text-title">
+                      <h4 className="attachment-title text-title dark:text-white">
                         {attachment.value}
                       </h4>
                     </div>

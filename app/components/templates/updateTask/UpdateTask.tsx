@@ -348,14 +348,15 @@ function UpdateTask({ members, mainTask }: CreateTaskPropsType) {
             {todos.length
               ? todos.map((todo, index) => (
                   <div
-                    className="todo flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] p-2 w-full"
+                    className="todo flex items-center justify-between px-3 rounded-sm dark:bg-neutral-700 dark:border
+                  dark:border-neutral-500 bg-[#e5e5e5] p-2 w-full"
                     onClick={() => completeTodo(todo)}
                   >
                     <div className="todo-wrapper flex items-center gap-x-2">
                       <span className="todo_index text-gray-400">
                         0{index + 1}
                       </span>
-                      <h4 className="todo-title text-title">{todo.value}</h4>
+                      <h4 className="todo-title text-title dark:text-white">{todo.value}</h4>
                     </div>
                     <div className="flex items-center gap-x-1">
                       <Checkbox checked={todo.isDone} sx={{ marginTop: 0.3 }} />
@@ -406,12 +407,13 @@ function UpdateTask({ members, mainTask }: CreateTaskPropsType) {
           <div className="attachments flex flex-col gap-y-3 text-[14px]">
             {attachments.length
               ? attachments.map((attachment, index) => (
-                  <div className="attchments-content flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] p-2 w-full">
+                  <div className="attchments-content dark:bg-neutral-700 dark:border
+                  dark:border-neutral-500 flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] p-2 w-full">
                     <div className="attachment-wrapper flex items-center gap-x-2">
                       <span className="attachment_index text-gray-400">
                         0{index + 1}
                       </span>
-                      <h4 className="attachment-title text-title">
+                      <h4 className="attachment-title text-title dark:text-white">
                         {attachment.value}
                       </h4>
                     </div>
