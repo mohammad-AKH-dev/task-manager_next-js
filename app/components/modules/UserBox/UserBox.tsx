@@ -68,10 +68,8 @@ function UserBox(props: UserBoxPropsType) {
       }}
     >
       <div className="user-infos min-w-[300px] cursor-pointer flex gap-x-4">
-        <Image
+        <img
           className="max-w-[50px] rounded-full"
-          width={1000}
-          height={1000}
           src={profile}
           alt="user"
         />
