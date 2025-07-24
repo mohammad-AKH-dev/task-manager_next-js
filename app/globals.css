@@ -12,6 +12,18 @@
   width: 100% !important;
 }
 
+html.dark .css-1yf54bd-MuiChartsLegend-root {
+   color: #fff !important
+}
+
+html.dark .css-1yscjcf-MuiChartsAxis-root-MuiChartsXAxis-root .MuiChartsAxis-tickLabel {
+  fill: #fff !important;
+}
+
+html.dark .MuiChartsAxis-tickLabel > tspan {
+  fill: #fff !important;
+}
+
 
 @media all and (max-width: 1130px) {
   .inputs-wrapper {

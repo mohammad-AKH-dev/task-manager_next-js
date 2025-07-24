@@ -57,7 +57,7 @@ export default function UsersMultipleDialog({
             add members
           </>
         )}
-        <span className="text-[12px] text-gray-500 dark:text-white absolute left-2.5 -top-[11px] z-[99]">
+        <span className="text-[12px] text-gray-500 dark:text-white absolute left-2.5 -top-[11px]">
           Assign To
         </span>
       </div>
