@@ -2,11 +2,14 @@ import { Avatar, AvatarGroup, LinearProgress } from "@mui/material";
 import React from "react";
 import { IconPaperclip } from "@tabler/icons-react";
 import { taskType } from "@/app/types/tasks";
+import Link from "next/link";
+import { todo } from "node:test";
 
 type TaskBoxPropsType = taskType;
 
 function TaskBox(props: TaskBoxPropsType) {
   const {
+    id,
     deadLine,
     priority,
     title,
@@ -18,20 +21,20 @@ function TaskBox(props: TaskBoxPropsType) {
   } = props;
 
   return (
-    <div className="task-box p-6 bg-white text-[14px] text-gray-500 rounded-xl dark:border-neutral-700 dark:bg-neutral-800 shadow-md">
+    <Link href={`/update-task/${id}`} className="task-box p-6 bg-white text-[14px] cursor-pointer text-gray-500 rounded-xl dark:border-neutral-700 dark:bg-neutral-800 shadow-md">
       <div className="priority&status-infos text-[14px] flex flex-wrap lg:flex-nowrap gap-y-3 items-center gap-x-3">
         {/* task state */}
-        {todos.length === 0 && (
+        {[...todos].filter(todo => todo.isDone === true).length === 5 && (
           <span className="bg-green-100 rounded-md px-4 xl:text-[12px] text-[#4caf50] p-1 min-w-[100px] text-center block max-w-[150px]">
             Completed
           </span>
         )}
-        {todos.length > 0 && todos.length < 5 && (
+        {[...todos].filter(todo => todo.isDone === true).length > 0 && [...todos].filter(todo => todo.isDone === true).length < 5 && (
           <span className="bg-cyan-100 rounded-md px-4 xl:text-[12px] text-[#00bcd4] p-1 min-w-[100px] text-center block max-w-[150px]">
             In Progress
           </span>
         )}
-        {todos.length === 5 && (
+        {[...todos].filter(todo => todo.isDone === true).length === 0 && (
           <span className="bg-purple-100 rounded-md px-4 xl:text-[12px] text-[#9c27b0] p-1 min-w-[100px] text-center block max-w-[150px]">
             Pending
           </span>
@@ -64,7 +67,7 @@ function TaskBox(props: TaskBoxPropsType) {
         <span className="tasks-done">
           Task Done:{" "}
           <span className="font-bold text-black dark:text-[#e5e5e5]">
-            {5 - todos.length} / 5
+            {todos.filter(todo => todo.isDone === true).length} / {todos.length}
           </span>
         </span>
         <LinearProgress
@@ -72,7 +75,7 @@ function TaskBox(props: TaskBoxPropsType) {
           variant="determinate"
           sx={{ height: 7, borderRadius: 5 }}
           color="primary"
-          value={(5 - todos.length) * 20}
+          value={(todos.filter(todo => todo.isDone === true).length) * 20}
         />
       </div>
       {/* task deadline */}
@@ -82,13 +85,13 @@ function TaskBox(props: TaskBoxPropsType) {
             start date
           </span>
           <span className="start-date text-black dark:text-[#e5e5e5] font-bold">
-            {startDate ? startDate : "undfiend"}
+            {startDate ? startDate : "undefind"}
           </span>
         </div>
         <div className="flex flex-col">
           <span className="task-end-deadline__title capitalize">due date</span>
           <span className="end-date text-black dark:text-[#e5e5e5] font-bold">
-            {deadLine}
+            {deadLine.toString()}
           </span>
         </div>
       </div>
@@ -106,7 +109,7 @@ function TaskBox(props: TaskBoxPropsType) {
           <span className="text-black">{attachments.length}</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

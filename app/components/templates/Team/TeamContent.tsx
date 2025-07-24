@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import MemberBox from "../../modules/Team/MemberBox";
-import { MemberStatusBoxPropsType } from "../../modules/Team/MemberStatusBox";
 import { teamMembersType } from "@/app/types/teamMebers";
 
 type TeamContentPropsType = {
@@ -10,11 +9,6 @@ type TeamContentPropsType = {
 };
 
 function TeamContent({ team }: TeamContentPropsType) {
-  const [statuses, setStatuses] = useState<MemberStatusBoxPropsType[]>([
-    { name: "Pending", count: 0 },
-    { name: "In Progress", count: 3 },
-    { name: "Completed", count: 2 },
-  ]);
   return (
     <>
       {/* team members header */}

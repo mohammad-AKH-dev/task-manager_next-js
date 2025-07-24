@@ -2,6 +2,7 @@
 
 import { themeContext } from "@/app/contexts/ThemeContext";
 import {
+  Checkbox,
   CircularProgress,
   FormControl,
   InputLabel,
@@ -12,24 +13,27 @@ import React, { useContext, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
-import UsersMultipleDialog from "./UserPickerModal";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { getLocalStorageItem, url } from "@/app/utils/Utils";
-import { todosType } from "@/app/types/todos";
+import { todosType, todoType } from "@/app/types/todos";
 import { attachmentsType } from "@/app/types/attachments";
 import { teamMembersType } from "@/app/types/teamMebers";
 import { toast } from "react-toastify";
-import { tasksType } from "@/app/types/tasks";
+import { tasksType, taskType } from "@/app/types/tasks";
+import UsersMultipleDialog from "../createTask/UserPickerModal";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 type CreateTaskPropsType = {
   members: teamMembersType;
+  mainTask: taskType;
 };
 
-function CreateTask({ members }: CreateTaskPropsType) {
+function UpdateTask({ members, mainTask }: CreateTaskPropsType) {
   const ThemeContext = useContext(themeContext);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState<Date | null>(new Date());
+  const [dueDate, setDueDate] = useState<null | Date>(new Date());
   const userId = getLocalStorageItem("userId");
   const [tasks, setTasks] = useState<tasksType>([]);
   const [todo, setTodo] = useState<string>("");
@@ -39,7 +43,8 @@ function CreateTask({ members }: CreateTaskPropsType) {
   const [isOpen, setIsOpen] = useState(false);
   const [todos, setTodos] = useState<todosType>([]);
   const [attachments, setAttachments] = useState<attachmentsType>([]);
-  const [priority, setPriority] = useState<"Low" | "Meduim" | "High">("Low");
+  const [priority, setPriority] = useState<string>("Low");
+  const router = useRouter()
 
   const getTasks = () => {
     fetch(`${url}/tasks`)
@@ -49,6 +54,13 @@ function CreateTask({ members }: CreateTaskPropsType) {
 
   useEffect(() => {
     getTasks();
+    setTitle(mainTask.title);
+    setDescription(mainTask.description);
+    setTodos(mainTask.todos);
+    setPriority(mainTask.priority);
+    setDueDate(mainTask.deadLine);
+    setSelectedTeam(mainTask.team);
+    setAttachments(mainTask.attachments);
   }, []);
 
   const onSubmit = async () => {
@@ -60,54 +72,44 @@ function CreateTask({ members }: CreateTaskPropsType) {
       description.trim().length
     ) {
       setIsSubmited(true);
-      const checkIfTaskRepeated = tasks.some(
-        (task) =>
-          task.title.toLowerCase() === title.toLowerCase() ||
-          task.description.toLowerCase() === description.toLowerCase()
-      );
-      //  checks if task already exist
-      if (checkIfTaskRepeated) {
-        toast.error("This task has already been added.");
-        setIsSubmited(false);
-      } else {
-        if (todos.length === 5) {
-          const newTask = {
-            id: crypto.randomUUID(),
-            userId,
-            title,
-            description,
-            priority,
-            startDate: new Date().toDateString(),
-            deadLine: dueDate?.toDateString(),
-            team: selectedTeam,
-            todos: todos,
-            attachments: attachments,
-          };
-          try {
-            const res = await fetch(`${url}/tasks`, {
-              method: "POST",
-              headers: {
-                "Content-type": "application/json",
-              },
-              body: JSON.stringify(newTask),
-            });
-            if (res.ok) {
-              toast.success("Task added successfully.");
-              getTasks();
-              setTitle("");
-              setDescription("");
-              setTodos([]);
-              setAttachments([]);
-              setSelectedTeam([]);
-              setPriority("Low");
-              window.location.reload();
-            }
-          } catch (error) {
-            toast.error("Something went wrong. Please try again.");
+
+      if (todos.length === 5) {
+        const newTask = {
+          userId,
+          title,
+          description,
+          priority,
+          startDate: mainTask.startDate,
+          deadLine:
+            typeof dueDate === "string" ? dueDate : dueDate?.toDateString(),
+          team: selectedTeam,
+          todos: todos,
+          attachments: attachments,
+        };
+        try {
+          const res = await fetch(`${url}/tasks/${mainTask.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify(newTask),
+          });
+          if (res.ok) {
+            toast.success("Task Updated successfully.");
+            getTasks();
+            setTitle("");
+            setDescription("");
+            setTodos([]);
+            setAttachments([]);
+            setSelectedTeam([]);
+            setPriority("Low");
+            window.location.reload();
           }
-        } else {
-          toast.error("You should create at least 5 todos.");
+        } catch (error) {
+          toast.error("Something went wrong. Please try again.");
         }
+      } else {
+        toast.error("You should create at least 5 todos.");
       }
     } else {
       toast.error(
@@ -117,6 +119,43 @@ function CreateTask({ members }: CreateTaskPropsType) {
     setTimeout(() => {
       setIsSubmited(false);
     }, 3000);
+  };
+
+  const removeTask = (id: string) => {
+    console.log(id);
+    Swal.fire({
+      title: "Delete",
+      icon: "warning",
+      text: "Are you sure you want to delete this task?",
+      cancelButtonText: "No",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(`${url}/tasks/${id}`, {
+            method: "DELETE",
+          });
+          if (res.ok) {
+            toast.success('You have successfully deleted this task.')
+            router.replace('/tasks')
+          }
+        } catch (error) {
+            toast.error('Something went wrong. please try again.')
+        }
+      }
+    });
+  };
+
+  const completeTodo = (Todo: todoType) => {
+    const updatedTodos = [...todos].map((todo) => {
+      if (todo.id === Todo.id) {
+        todo.isDone = !todo.isDone;
+      }
+      return todo;
+    });
+
+    setTodos(updatedTodos);
   };
 
   // create check lists todo
@@ -187,10 +226,13 @@ function CreateTask({ members }: CreateTaskPropsType) {
     setIsOpen(false);
   };
   return (
-    <div className="create-task__section">
-      <h3 className="create-task-title text-[20px] font-bold capitalize">
-        create task
-      </h3>
+    <div className="update-task__section">
+      <div className="update-task__section-header flex items-center justify-between">
+        <h3 className="update-task-title text-[20px] font-bold capitalize">
+          update task
+        </h3>
+        <IconTrash className="text-red-600 cursor-pointer" onClick={() => removeTask(mainTask.id)}/>
+      </div>
       <form
         className="my-4 flex flex-col gap-y-8"
         onKeyDown={(event) => {
@@ -305,17 +347,23 @@ function CreateTask({ members }: CreateTaskPropsType) {
           <div className="todos flex flex-col gap-y-3 text-[14px]">
             {todos.length
               ? todos.map((todo, index) => (
-                  <div className="todo flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] p-2 w-full">
+                  <div
+                    className="todo flex items-center justify-between px-3 rounded-sm bg-[#e5e5e5] p-2 w-full"
+                    onClick={() => completeTodo(todo)}
+                  >
                     <div className="todo-wrapper flex items-center gap-x-2">
                       <span className="todo_index text-gray-400">
                         0{index + 1}
                       </span>
                       <h4 className="todo-title text-title">{todo.value}</h4>
                     </div>
-                    <IconTrash
-                      className="text-red-600 w-[20px] cursor-pointer"
-                      onClick={() => removeTodo(todo.id)}
-                    />
+                    <div className="flex items-center gap-x-1">
+                      <Checkbox checked={todo.isDone} sx={{ marginTop: 0.3 }} />
+                      <IconTrash
+                        className="text-red-600 w-[20px] cursor-pointer"
+                        onClick={() => removeTodo(todo.id)}
+                      />
+                    </div>
                   </div>
                 ))
               : null}
@@ -412,7 +460,7 @@ function CreateTask({ members }: CreateTaskPropsType) {
               <CircularProgress size="20px" sx={{ color: "#fff" }} />
             </div>
           ) : (
-            <span>Create Task</span>
+            <span>Update Task</span>
           )}
         </button>
       </form>
@@ -420,4 +468,4 @@ function CreateTask({ members }: CreateTaskPropsType) {
   );
 }
 
-export default CreateTask;
+export default UpdateTask;

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import MemberStatusBox, { MemberStatusBoxPropsType } from "./MemberStatusBox";
+import MemberStatusBox from "./MemberStatusBox";
 import { teamMemberType } from "@/app/types/teamMebers";
 
 type MemberBoxPropsType = {

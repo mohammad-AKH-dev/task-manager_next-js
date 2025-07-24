@@ -10,11 +10,24 @@ import Link from "next/link";
 import { IconArrowRight } from "@tabler/icons-react";
 import LinkButton from "../../modules/LinkButton/LinkButton";
 import { useSidebar } from "../../ui/Sidebar";
+import { getCookie, getLocalStorageItem } from "@/app/utils/Utils";
+import { tasksType } from "@/app/types/tasks";
 
-function DashboardContent() {
+type DashboardContentPropsType = {
+  tasks: tasksType;
+};
+
+function DashboardContent({ tasks }: DashboardContentPropsType) {
   const [today, setToday] = useState(new Date("").toUTCString());
   const [greeting, setGreeting] = useState("");
+  const user = JSON.parse(getCookie("user")!);
+  const userId = getLocalStorageItem("userId");
+  const [mainTasks, setMainTasks] = useState<tasksType>([]);
   const ThemeContext = useContext(themeContext);
+
+  useEffect(() => {
+    setMainTasks(() => tasks.filter((task) => task.userId === userId));
+  }, []);
 
   // sets today's date per sec in interval
   useEffect(() => {
@@ -40,16 +53,40 @@ function DashboardContent() {
       {/* dashboard header */}
       <div className="dashboard-header p-4 w-full bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-200 rounded-xl">
         <h2 className="dashboard-title text-[23px] dark:text-neutral-200 font-bold">
-          {greeting}! Mike
+          {greeting}! {user?.username}
         </h2>
         <span className="dashboard-today__date text-gray-400 text-[15px] pt-2 block capitalize">
           {today}
         </span>
         <div className="tasks-infos grid grid-cols-1 sm:grid-cols-2 gap-y-6  lg:grid-cols-4 w-full mt-5">
-          <TaskInfoBox title="total tasks" count={18} color="bg-blue-600" />
-          <TaskInfoBox title="pending tasks" count={11} color="bg-purple-600" />
-          <TaskInfoBox title="in progress" color="bg-sky-300" count={5} />
-          <TaskInfoBox title="completed tasks" color="bg-green-400" count={2} />
+          <TaskInfoBox
+            title="total tasks"
+            count={mainTasks.length}
+            color="bg-blue-600"
+          />
+          <TaskInfoBox
+            title="pending tasks"
+            count={
+              [...mainTasks].filter((task) => task.todos.length === 5).length
+            }
+            color="bg-purple-600"
+          />
+          <TaskInfoBox
+            title="in progress"
+            color="bg-sky-300"
+            count={
+              [...mainTasks].filter(
+                (task) => task.todos.length > 0 && task.todos.length < 5
+              ).length
+            }
+          />
+          <TaskInfoBox
+            title="completed tasks"
+            color="bg-green-400"
+            count={
+              [...mainTasks].filter((task) => task.todos.length === 0).length
+            }
+          />
         </div>
       </div>
       {/* dashboard charts */}
@@ -99,9 +136,9 @@ function DashboardContent() {
           <h4 className="dashboard-table__title capitalize font-bold dark:text-neutral-200 text-black">
             Recent Tasks
           </h4>
-            <LinkButton href="/tasks"/>
+          <LinkButton href="/tasks" />
         </div>
-        <RecentTasks />
+        <RecentTasks tasks={mainTasks}/>
       </div>
     </div>
   );

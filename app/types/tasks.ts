@@ -9,7 +9,7 @@ export type taskType = {
   description: string;
   priority: string;
   startDate: string,
-  deadLine: string;
+  deadLine: string | Date
   team: teamMemberType[] | [];
   todos: todoType[] | [];
   attachments: attachmentType[] | [];

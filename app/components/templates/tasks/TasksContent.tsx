@@ -44,33 +44,33 @@ function TasksContent({ tasks }: TasksContentPropsType) {
       {/* tasks */}
       <div
         className={`tasks-wrapper ${
-          mainTasks.length &&
-          "grid grid-cols-1 lg:grid-cols-2 gap-y-6 xl:grid-cols-3 gap-x-6 mt-8"
+          mainTasks.length ?
+          "grid grid-cols-1 lg:grid-cols-2 gap-y-6 xl:grid-cols-3 gap-x-6 mt-8" : null
         }`}
       > {
         mainTasks.length &&
-          selectedTasks === "all" &&
-          mainTasks.map((task) => <TaskBox {...task} />)}
+          selectedTasks === "all" ?
+          mainTasks.map((task) => <TaskBox {...task} />) : null}
 
         {mainTasks.length &&
-          selectedTasks === "pending" &&
+          selectedTasks === "pending" ?
           mainTasks
             .filter((task) => task.todos.length === 5)
-            .map((task) => <TaskBox {...task} />)}
+            .map((task) => <TaskBox {...task} />): null}
 
         {mainTasks.length &&
-          selectedTasks === "in progress" &&
+          selectedTasks === "in progress" ?
           mainTasks
             .filter((task) => task.todos.length > 0 && task.todos.length < 5)
-            .map((task) => <TaskBox {...task} />)}
+            .map((task) => <TaskBox {...task} />): null}
 
         {mainTasks.length &&
-          selectedTasks === "completed" &&
+          selectedTasks === "completed" ?
           mainTasks
             .filter((task) => task.todos.length === 0)
-            .map((task) => <TaskBox {...task} />)}
+            .map((task) => <TaskBox {...task} />): null}
 
-        {!mainTasks.length && <EmptyTaskState />}
+        {!mainTasks.length ? <EmptyTaskState /> : null}
       </div>
     </>
   );

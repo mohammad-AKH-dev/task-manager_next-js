@@ -8,68 +8,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { themeContext } from "@/app/contexts/ThemeContext";
+import { tasksType } from "@/app/types/tasks";
+import EmptyTaskState from "../Tasks/EmptyTaskState";
 
-type taskType = {
-  id: string;
-  name: string;
-  status: "completed" | "pending" | "in progress";
-  priority: "High" | "Medium" | "Low";
-  created_at: string;
-  author_id: string;
-};
+type RecentTasksPropsType = {
+  tasks: tasksType
+}
 
-const rows: taskType[] = [
-  {
-    id: "1",
-    name: "develop Product Review System",
-    status: "completed",
-    priority: "High",
-    created_at: "17th Mar 2025",
-    author_id: "idpjdfjdpfjdop",
-  },
-  {
-    id: "2",
-    name: "develop Product Review System",
-    status: "in progress",
-    priority: "High",
-    created_at: "17th Mar 2025",
-    author_id: "idpjdfjdpfjdop",
-  },
-  {
-    id: "3",
-    name: "develop Product Review System",
-    status: "pending",
-    priority: "Low",
-    created_at: "17th Mar 2025",
-    author_id: "idpjdfjdpfjdop",
-  },
-  {
-    id: "4",
-    name: "develop Product Review System",
-    status: "pending",
-    priority: "Medium",
-    created_at: "17th Mar 2025",
-    author_id: "idpjdfjdpfjdop",
-  },
-  {
-    id: "5",
-    name: "develop Product Review System",
-    status: "pending",
-    priority: "High",
-    created_at: "17th Mar 2025",
-    author_id: "idpjdfjdpfjdop",
-  },
-  {
-    id: "6",
-    name: "develop Product Review System",
-    status: "pending",
-    priority: "High",
-    created_at: "17th Mar 2025",
-    author_id: "idpjdfjdpfjdop",
-  },
-];
-
-export default function RecentTasks() {
+export default function RecentTasks({tasks}: RecentTasksPropsType) {
   const ThemeContext = React.useContext(themeContext);
 
   return (
@@ -135,7 +81,7 @@ export default function RecentTasks() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
+          {tasks.length ? tasks.slice(0,6).map((task, index) => (
             <TableRow
               key={index}
               className="border-b-neutral-200 border-b dark:border-b-neutral-500"
@@ -161,7 +107,7 @@ export default function RecentTasks() {
                   fontWeight: 'bold'
                 }}
               >
-                {row.name}
+                {task.title}
               </TableCell>
               <TableCell
                 className="capitalize text-red-600"
@@ -173,19 +119,19 @@ export default function RecentTasks() {
                 }}
                 align="right"
               >
-                {row.status === "pending" && (
+                {task.todos.length === 5  && (
                   <span className="bg-[#e9d5ff] rounded-sm px-4 text-[#9333ea] p-2">
-                    {row.status}
+                    Pending
                   </span>
                 )}
-                {row.status === "in progress" && (
+                {task.todos.length > 0 && task.todos.length < 5 && (
                   <span className="bg-[#bae6fd] rounded-sm px-4 text-[#0284c7] p-2">
-                    {row.status}
+                     In Progress
                   </span>
                 )}
-                {row.status === "completed" && (
+                {task.todos.length === 0 && (
                   <span className="bg-[#bbf7d0] rounded-sm px-4 text-[#16a34a] p-2">
-                    {row.status}
+                    Completed
                   </span>
                 )}
               </TableCell>
@@ -198,19 +144,19 @@ export default function RecentTasks() {
                 }}
                 align="right"
               >
-                {row.priority === "Low" && (
+                {task.priority === "Low" && (
                   <span className="text-[#16a34a] bg-[#bbf7d0] px-4 p-2 rounded-sm">
-                    {row.priority}
+                    {task.priority}
                   </span>
                 )}
-                {row.priority === "Medium" && (
+                {task.priority === "Meduim"&& (
                   <span className="text-[#d97706] bg-[#fde68a] px-4 p-2 rounded-sm">
-                    {row.priority}
+                    {task.priority}
                   </span>
                 )}
-                {row.priority === "High" && (
+                {task.priority === "High" && (
                   <span className="text-[#dc2626] bg-[#fecaca] px-4 p-2 rounded-sm">
-                    {row.priority}
+                    {task.priority}
                   </span>
                 )}
                 
@@ -225,10 +171,13 @@ export default function RecentTasks() {
                 }}
                 align="right"
               >
-                {row.created_at}
+                {task.startDate ? task.startDate : 'undefind'}
               </TableCell>
             </TableRow>
-          ))}
+          )):
+          <div className="max-h-[400px] translate-x-[75px] md:translate-x-[100px] lg:translate-x-[140px] -translate-y-10 lg:translate-y-2">
+             <EmptyTaskState/>
+          </div> }
         </TableBody>
       </Table>
     </TableContainer>
