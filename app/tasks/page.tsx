@@ -5,6 +5,7 @@ import { url } from "../utils/Utils";
 import { tasksType, taskType } from "../types/tasks";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import useGetTasks from "../hooks/useGetTasks";
 
 async function page() {
    const cookieStore = await cookies()
@@ -12,9 +13,11 @@ async function page() {
     if(!user) {
       redirect('/login')
     }
+   
+     const res = await fetch(`${url}/tasks`);
+      const tasks: tasksType = await res.json();
 
-  const res = await fetch(`${url}/tasks`);
-  const tasks: tasksType = await res.json();
+    console.log(tasks)
 
   return (
     <div className="taskmanager-content__wrapper flex gap-x-6 sm:gap-x-5 md:gap-x-8 relative">

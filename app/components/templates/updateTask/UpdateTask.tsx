@@ -22,7 +22,8 @@ import { toast } from "react-toastify";
 import { tasksType, taskType } from "@/app/types/tasks";
 import UsersMultipleDialog from "../createTask/UserPickerModal";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import useGetTasks from "@/app/hooks/useGetTasks";
 
 type CreateTaskPropsType = {
   members: teamMembersType;
@@ -97,12 +98,13 @@ function UpdateTask({ members, mainTask }: CreateTaskPropsType) {
           if (res.ok) {
             toast.success("Task Updated successfully.");
             getTasks();
-            setTitle("");
-            setDescription("");
-            setTodos([]);
-            setAttachments([]);
-            setSelectedTeam([]);
-            setPriority("Low");
+            setTitle(mainTask.title);
+            setDescription(mainTask.description);
+            setTodos(mainTask.todos);
+            setAttachments(mainTask.attachments);
+            setSelectedTeam(mainTask.team);
+            setPriority(mainTask.priority);
+            router.replace('/tasks')
           }
         } catch (error) {
           toast.error("Something went wrong. Please try again.");
@@ -120,30 +122,31 @@ function UpdateTask({ members, mainTask }: CreateTaskPropsType) {
     }, 3000);
   };
 
-  const removeTask = (id: string) => {
-    Swal.fire({
-      title: "Delete",
-      icon: "warning",
-      text: "Are you sure you want to delete this task?",
-      cancelButtonText: "No",
-      showCancelButton: true,
-      confirmButtonText: "Yes",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const res = await fetch(`${url}/tasks/${id}`, {
-            method: "DELETE",
-          });
-          if (res.ok) {
-            toast.success('You have successfully deleted this task.')
-            router.replace('/tasks')
-          }
-        } catch (error) {
-            toast.error('Something went wrong. please try again.')
-        }
-      }
-    });
-  };
+  // const removeTask = (id: string) => {
+  //    console.log(id)
+  //   Swal.fire({
+  //     title: "Delete",
+  //     icon: "warning",
+  //     text: "Are you sure you want to delete this task?",
+  //     cancelButtonText: "No",
+  //     showCancelButton: true,
+  //     confirmButtonText: "Yes",
+  //   }).then(async (result) => {
+  //     if (result.isConfirmed) {
+  //       try {
+  //         const res = await fetch(`${url}/tasks/${id}`, {
+  //           method: "DELETE",
+  //         });
+  //         if (res.ok) {
+  //           toast.success('You have successfully deleted this task.')
+  //           router.replace('/tasks')
+  //         }
+  //       } catch (error) {
+  //           toast.error('Something went wrong. please try again.')
+  //       }
+  //     }
+  //   });
+  // };
 
   const completeTodo = (Todo: todoType) => {
     const updatedTodos = [...todos].map((todo) => {
@@ -229,7 +232,7 @@ function UpdateTask({ members, mainTask }: CreateTaskPropsType) {
         <h3 className="update-task-title text-[20px] font-bold capitalize">
           update task
         </h3>
-        <IconTrash className="text-red-600 cursor-pointer" onClick={() => removeTask(mainTask.id)}/>
+        <IconTrash className="text-red-600 cursor-pointer"/>
       </div>
       <form
         className="my-4 flex flex-col gap-y-8"

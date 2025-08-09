@@ -20,6 +20,7 @@ import { attachmentsType } from "@/app/types/attachments";
 import { teamMembersType } from "@/app/types/teamMebers";
 import { toast } from "react-toastify";
 import { tasksType } from "@/app/types/tasks";
+import useGetTasks from "@/app/hooks/useGetTasks";
 
 type CreateTaskPropsType = {
   members: teamMembersType;
@@ -100,6 +101,7 @@ function CreateTask({ members }: CreateTaskPropsType) {
               setAttachments([]);
               setSelectedTeam([]);
               setPriority("Low");
+              await useGetTasks()
             }
           } catch (error) {
             toast.error("Something went wrong. Please try again.");
