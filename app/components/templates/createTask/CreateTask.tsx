@@ -100,7 +100,6 @@ function CreateTask({ members }: CreateTaskPropsType) {
               setAttachments([]);
               setSelectedTeam([]);
               setPriority("Low");
-              window.location.reload();
             }
           } catch (error) {
             toast.error("Something went wrong. Please try again.");
