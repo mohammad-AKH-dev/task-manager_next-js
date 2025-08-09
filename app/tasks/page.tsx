@@ -16,9 +16,7 @@ async function page() {
    
      const res = await fetch(`${url}/tasks`);
       const tasks: tasksType = await res.json();
-
-    console.log(tasks)
-
+      
   return (
     <div className="taskmanager-content__wrapper flex gap-x-6 sm:gap-x-5 md:gap-x-8 relative">
       <SidebarDemo />
